@@ -1,4 +1,5 @@
 **.pyc
 /.venv
 /.vscode
+/sequence_generators
 /todo.txt
