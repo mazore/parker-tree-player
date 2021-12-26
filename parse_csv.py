@@ -1,6 +1,5 @@
-import time
+"""From https://github.com/GSD6338/XmasTree/blob/main/03_execution/run.py"""
 from csv import reader
-import sys
 
 
 def chunks(lst, n):
@@ -9,6 +8,9 @@ def chunks(lst, n):
 
 
 def parse_csv(filename):
+    """Returns a list of animation frames, which are lists containing 500 grb tuples corresponding
+    to each LEDs index.
+    """
     result = []
 
     with open(filename, 'r') as read_obj:

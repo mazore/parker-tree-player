@@ -9,7 +9,8 @@ from play3d.three_d import Device, Camera
 
 WIDTH, HEIGHT = 640, 480
 
-FILENAME = 'main.csv'
+SEQ_FILENAME = 'sequences/pulse-red.csv'
+COORDS_FILENAME = 'coords/parker.csv'
 
 
 class Light:
@@ -23,13 +24,19 @@ class Light:
             position=position,
             data=[[0, 0, 0, 1]],
             color=color,
-            # shimmering=shimmering
+            shimmering=shimmering
         )
 
     def set_color(self, index):
-        if index < 500:  # TODO
-            g, r, b = self.main.animation_data[self.main.frame_number][index]
+        if self.main.frame_number >= len(self.main.animation_data):
+            print('Finished')
+            quit()
+        frame = self.main.animation_data[self.main.frame_number]
+        try:
+            g, r, b = frame[index]
             self.model.color = r, g, b
+        except IndexError:  # Account for floor objects without color data
+            pass
 
     def draw(self):
         pos = np.dot(self.main.rotation_z, self.position)
@@ -47,7 +54,7 @@ class Main:
         self.lights = []
         self.setup_lights()
 
-        self.animation_data = parse_csv(FILENAME)
+        self.animation_data = parse_csv(SEQ_FILENAME)
         self.frame_number = 0
 
         self.mainloop()
@@ -67,7 +74,7 @@ class Main:
         self.camera.rotate('x', 90)
 
     def setup_lights(self):
-        for line in open('coords.txt', encoding='utf-8'):
+        for line in open(COORDS_FILENAME, encoding='utf-8'):
             position = [float(e) for e in line.strip('\ufeff').split(',')]
             self.lights.append(Light(self, position))
         ground_positions = []
@@ -87,7 +94,7 @@ class Main:
 
             self.screen.fill((20, 20, 20))
 
-            # self.angle += 0.02
+            self.angle += 0.02
             self.rotation_z = np.matrix([
                 [cos(self.angle), sin(self.angle), 0],
                 [-sin(self.angle), cos(self.angle), 0],
