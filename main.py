@@ -7,10 +7,10 @@ from parse_csv import parse_csv
 from play3d.models import Model
 from play3d.three_d import Device, Camera
 
-WIDTH, HEIGHT = 640, 480
-
 SEQ_FILENAME = 'sequences/pulse-red.csv'
 COORDS_FILENAME = 'coords/parker.csv'
+
+WIDTH, HEIGHT = 640, 480
 
 
 class Light:
@@ -86,9 +86,7 @@ class Main:
             self.lights.append(Light(self, position, color=(255, 255, 255), shimmering=False))
 
     def mainloop(self):
-        clock = pygame.time.Clock()
         while True:
-            clock.tick(30)
             self.frame_number += 1
             t = time()
 
