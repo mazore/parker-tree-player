@@ -4,7 +4,7 @@ import numpy as np
 import pygame
 from math import cos, sin, pi
 from random import randint
-from time import time, sleep
+from time import time
 from parse_csv import parse_csv
 from play3d.models import Model
 from play3d.three_d import Device, Camera
@@ -78,7 +78,6 @@ class Main:
 
         pygame.init()
         self.screen = pygame.display.set_mode(Device.get_resolution())
-        sleep(5)
         self.camera = Camera.get_instance()
         self.camera.move(x=0, y=5, z=1.5)
         self.camera.rotate('x', 90)
