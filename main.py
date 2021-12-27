@@ -3,8 +3,8 @@
 import numpy as np
 import pygame
 from math import cos, sin, pi
-from random import randint
-from time import time
+from random import choice, randint
+from time import time, sleep
 from parse_csv import parse_csv
 from play3d.models import Model
 from play3d.three_d import Device, Camera
@@ -42,7 +42,7 @@ class Light:
         if self.main.frame_number >= len(self.main.animation_data):
             print('Finished')
             quit()
-        frame = self.main.animation_data[self.main.frame_number]
+        frame = self.main.animation_data[self.main.frame_number*2]
         try:
             g, r, b = frame[index]
             self.model.color = r, g, b
@@ -67,6 +67,8 @@ class Main:
         self.animation_data = parse_csv(SEQ_FILENAME)
         self.frame_number = 0
 
+        sleep(5)
+
         self.mainloop()
 
     def set_pixel(self, x, y, color):
@@ -85,7 +87,7 @@ class Main:
     def setup_lights(self):
         for line in open(COORDS_FILENAME, encoding='utf-8'):
             position = [float(e) for e in line.strip('\ufeff').split(',')]
-            self.lights.append(Light(self, position, shimmering=False))
+            self.lights.append(Light(self, position))
         ground_positions = []
         subdivisions = 2
         for i in range(-subdivisions, subdivisions+1):
@@ -95,13 +97,13 @@ class Main:
             self.lights.append(Light(self, position, color=(255, 255, 255)))
 
     def handle_rotation(self):
-        if not pygame.mouse.get_pressed()[0] and 'rotation_z' in self.__dict__:
-            return
         if 'rotation_z' not in self.__dict__:  # First frame
             angle_x = 0
             angle_z = 0
         else:
-            x_ratio = pygame.mouse.get_pos()[0] / WIDTH
+            if not pygame.mouse.get_pressed()[0]:
+                return
+            x_ratio = pygame.mouse.get_pos()[0] / WIDTH + 0.5
             y_ratio = pygame.mouse.get_pos()[1] / HEIGHT
             angle_z = x_ratio * pi * 2
             angle_x = y_ratio * pi/2 - pi/4
