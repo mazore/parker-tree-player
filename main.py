@@ -1,5 +1,3 @@
-# import atexit
-# from line_profiler import LineProfiler
 import numpy as np
 import pygame
 from math import cos, sin, pi
@@ -13,15 +11,12 @@ import sys
 try:
     SEQ_FILENAME = sys.argv[1]
 except IndexError:
-    SEQ_FILENAME ='sequences/pulse-red.csv'
+    SEQ_FILENAME ='main.csv'
 COORDS_FILENAME = 'coords/parker.csv'
 print('Playing file:', SEQ_FILENAME)
 print('Using coords:', COORDS_FILENAME)
 
 WIDTH, HEIGHT = 640, 480
-
-# profiler = LineProfiler()
-# atexit.register(profiler.print_stats)
 
 
 class Light:
@@ -42,7 +37,7 @@ class Light:
         if self.main.frame_number >= len(self.main.animation_data):
             print('Finished')
             quit()
-        frame = self.main.animation_data[self.main.frame_number*2]
+        frame = self.main.animation_data[self.main.frame_number]
         try:
             g, r, b = frame[index]
             self.model.color = r, g, b
@@ -67,12 +62,17 @@ class Main:
         self.animation_data = parse_csv(SEQ_FILENAME)
         self.frame_number = 0
 
-        sleep(5)
+        # sleep(5)
 
         self.mainloop()
 
     def set_pixel(self, x, y, color):
-        pygame.draw.circle(self.screen, color, (x, HEIGHT-y), 2)
+        try:
+            pygame.draw.circle(self.screen, color, (x, HEIGHT-y), 2)
+        except ValueError as e:
+            if str(e) == 'invalid color argument':
+                raise ValueError('Invalid color argument: ' + str(color))
+            raise e
 
     def setup_scene(self):
         Device.viewport(WIDTH, HEIGHT)
@@ -120,7 +120,7 @@ class Main:
 
     def mainloop(self):
         while True:
-            self.frame_number += 1
+            self.frame_number += 2
             t = time()
 
             self.screen.fill((50, 50, 50))
